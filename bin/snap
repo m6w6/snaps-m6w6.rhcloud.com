@@ -55,6 +55,7 @@ export
 buildconf
 tarnsum bz2 &
 tarnsum gz &
+tarnsum xz &
 wait
 publish
 prune
