@@ -1,2 +1,2 @@
 #!/bin/bash
-$(dirname $0)/../../../bin/snap 7.0
+$(dirname $0)/../../../bin/snap PHP-7.0
