@@ -1,0 +1,7 @@
+#!/bin/bash
+snap=$(dirname $0)/../../bin/snap
+$snap PHP-5.6 &
+$snap PHP-7.0 &
+$snap PHP-7.1 &
+$snap master &
+wait
