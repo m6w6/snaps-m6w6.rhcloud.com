@@ -47,7 +47,7 @@ publish() {
 }
 prune() {
 	echo "Pruning old snaps ..."
-	find $OPENSHIFT_DATA_DIR/snaps -mindepth 1 -mmin +300 -delete
+	find $OPENSHIFT_DATA_DIR/snaps -mindepth 1 -mmin +120 -delete
 }
 
 fetch
