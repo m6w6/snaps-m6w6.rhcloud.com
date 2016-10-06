@@ -22,16 +22,16 @@ export() {
 	echo "Exporting to $PHP_SNAP_PATH ..."
 	cd $OPENSHIFT_DATA_DIR/php-src
 	git archive --format=tar --prefix=$PHP_SNAP_PATH/ $PHP_SNAP_HEAD \
-		| tar -C $OPENSHIFT_TEMP_DIR -x
+		| tar -C $OPENSHIFT_TMP_DIR -x
 }
 buildconf() {
 	echo "Running buildconf ..."
-	cd $OPENSHIFT_TEMP_DIR/$PHP_SNAP_PATH
+	cd $OPENSHIFT_TMP_DIR/$PHP_SNAP_PATH
 	make -f build/build.mk
 }
 tarnsum() {
 	echo Creating tar.$1 ...
-	cd $OPENSHIFT_TEMP_DIR
+	cd $OPENSHIFT_TMP_DIR
 	tar -acf $PHP_SNAP_PATH{.tar.$1,}
 	ln -s {$PHP_SNAP_PATH,$PHP_SNAP_NAME-latest}.tar.$1
 	sha512sum $PHP_SNAP_PATH.tar.$1 > $PHP_SNAP_PATH.tar.$1.sha512.asc
@@ -39,10 +39,11 @@ tarnsum() {
 }
 publish() {
 	echo "Publishing latest $PHP_SNAP_HEAD snapshot ..."
-	mkdir -p $OPENSHIFT_DATA_DIR/snaps
-	rm -rf $OPENSHIFT_TEMP_DIR/$PHP_SNAP_PATH
-	mv -t $OPENSHIFT_DATA_DIR/snaps $OPENSHIFT_TEMP_DIR/$PHP_SNAP_NAME*
-	ls -gG $OPENSHIFT_DATA_DIR/snaps/$PHP_SNAP_NAME-latest*
+	cd $OPENSHIFT_DATA_DIR
+	mkdir -p snaps
+	rm -rf $OPENSHIFT_TMP_DIR/$PHP_SNAP_PATH
+	mv -t snaps $OPENSHIFT_TMP_DIR/$PHP_SNAP_NAME*
+	ls -gG snaps/$PHP_SNAP_NAME-latest*
 }
 prune() {
 	echo "Pruning old snaps ..."
