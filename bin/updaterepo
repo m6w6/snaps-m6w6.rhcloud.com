@@ -1,0 +1,12 @@
+#!/bin/bash
+
+PHP_SNAP_REPO=${1:-https://git.php.net/repository/php-src.git}
+
+cd $OPENSHIFT_DATA_DIR
+if test -d php-src; then
+	echo "Fetching from $PHP_SNAP_REPO ..."
+	cd php-src
+	git fetch
+else
+	git clone --mirror $PHP_SNAP_REPO php-src
+fi

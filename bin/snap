@@ -1,24 +1,14 @@
 #!/bin/bash
 
 set -e
+PATH="$PATH:$(dirname $0)"
 
 PHP_SNAP_HEAD=${1:-master}
-PHP_SNAP_REPO=https://github.com/php/php-src.git #https://git.php.net/repository/php-src.git
 PHP_SNAP_DATE=$(date -u +%Y%m%d%H)
 PHP_SNAP_NAME=$(tr A-Z a-z <<<"$PHP_SNAP_HEAD")
 PHP_SNAP_PATH=$PHP_SNAP_NAME-$PHP_SNAP_DATE
 
-fetch() {
-	cd $OPENSHIFT_DATA_DIR
-	if test -d php-src; then
-		echo "Fetching from $PHP_SNAP_REPO ..."
-		cd php-src
-		git fetch
-	else
-		git clone --mirror $PHP_SNAP_REPO php-src
-	fi
-}
-export() {
+exportbranch() {
 	echo "Exporting to $PHP_SNAP_PATH ..."
 	cd $OPENSHIFT_DATA_DIR/php-src
 	git archive --format=tar --prefix=$PHP_SNAP_PATH/ $PHP_SNAP_HEAD \
@@ -30,7 +20,7 @@ buildconf() {
 	make -f build/build.mk
 }
 tarnsum() {
-	echo Creating tar.$1 ...
+	echo "Creating tar.$1 ..."
 	cd $OPENSHIFT_TMP_DIR
 	tar -acf $PHP_SNAP_PATH{.tar.$1,}
 	ln -s {$PHP_SNAP_PATH,$PHP_SNAP_NAME-latest}.tar.$1
@@ -45,17 +35,11 @@ publish() {
 	mv -t snaps $OPENSHIFT_TMP_DIR/$PHP_SNAP_NAME*
 	ls -gG snaps/$PHP_SNAP_NAME-latest*
 }
-prune() {
-	echo "Pruning old snaps ..."
-	find $OPENSHIFT_DATA_DIR/snaps -mindepth 1 -mmin +120 -delete
-}
 
-fetch
-export
+exportbranch
 buildconf
 tarnsum bz2 &
 tarnsum gz &
 tarnsum xz &
 wait
 publish
-prune
