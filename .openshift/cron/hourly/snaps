@@ -5,8 +5,7 @@ prunesnaps &
 updaterepo &
 wait
 
-snap master &
-snap PHP-7.1 &
-snap PHP-7.0 &
-snap PHP-5.6 &
-wait
+snap master
+snap PHP-7.1
+snap PHP-7.0
+snap PHP-5.6
